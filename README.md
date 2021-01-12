@@ -1,0 +1,1 @@
+Can run with openstreetmap data but opening with carla doesn't support myanmar fonts.
