@@ -1,3 +1,6 @@
+#### required dependencies
+- coloredlogs
+
 
 #### use -m to change map
 available maps:

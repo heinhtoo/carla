@@ -5,7 +5,9 @@ import sys
 import glob
 import re
 import textwrap
-from numpy import random
+import _thread
+from util.weather import Weather
+from util.actor import Actor
 
 try:
     sys.path.append(glob.glob('../carla/dist/carla-*%d.%d-%s.egg' % (
@@ -16,7 +18,6 @@ except IndexError:
     pass
 
 import carla
-from carla import VehicleLightState as vls
 
 SpawnActor = carla.command.SpawnActor
 SetAutopilot = carla.command.SetAutopilot
@@ -24,12 +25,49 @@ SetVehicleLightState = carla.command.SetVehicleLightState
 FutureActor = carla.command.FutureActor
 
 class World(object):
-    def __init__(self, args):
-        self.actor_role_name = args.rolename
+    def __init__(self, args):        
         self.args = args
         self.client = carla.Client('localhost', 2000)
         self.client.set_timeout(float(args.timeout))        
         self.world = self.get_world()
+        self.blueprints_library = self.world.get_blueprint_library()
+        self.show_weather_info = True
+        self.dynamic_weather_is_running = False        
+        self.actor_list = []
+        self.actor_role_name = args.rolename
+        
+    def spawn_actor(self, blueprint_name, spawn_point):
+        blueprint = self.blueprints_library.filter(blueprint_name)[0]
+        vehicle = self.world.spawn_actor(blueprint, spawn_point)
+        actor = Actor(self.world, self.args.rolename, vehicle, blueprint, spawn_point)        
+        self.actor_list.append(actor)            
+        return actor    
+    
+    def get_spawn_points(self):
+        return self.world.get_map().get_spawn_points()
+    
+    def dynamic_weather(self, speed):        
+        update_freq = 0.1 / speed
+        weather = Weather(self.world.get_weather())
+        elapsed_time = 0.0
+        while(self.dynamic_weather_is_running):
+            timestamp = self.world.wait_for_tick(seconds=30.0).timestamp
+            elapsed_time += timestamp.delta_seconds
+            if elapsed_time > update_freq:
+                weather.tick(speed * elapsed_time)
+                self.world.set_weather(weather.weather)
+                if self.show_weather_info:
+                    logging.info(str(weather))                
+                elapsed_time = 0.0
+
+    def start_dynamic_weather(self, speed):
+        self.dynamic_weather_is_running = True
+        logging.info("Dynamic weather started")
+        _thread.start_new_thread(self.dynamic_weather, (speed, ))
+    
+    def stop_dynamic_weather(self):
+        logging.info("Dynamic weather ended")
+        self.dynamic_weather_is_running = False
         
     def get_world(self):
         if self.args.map is not None:
@@ -48,7 +86,7 @@ class World(object):
                     except OSError:
                         print('file could not be readed.')
                         sys.exit()
-                print('load opendrive map %r.' % os.path.basename(args.xodr_path))
+                print('load opendrive map %r.' % os.path.basename(self.args.xodr_path))
                 vertex_distance = 2.0  # in meters
                 max_road_length = 500.0 # in meters
                 wall_height = 1.0      # in meters
