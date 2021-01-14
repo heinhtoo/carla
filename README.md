@@ -5,7 +5,7 @@ available maps:
 
 osm or xodr maps are also available using --osm-path and -x or --xodr-path respectively.
 
-![#f03c15] Can run with openstreetmap data but opening with carla doesn't support myanmar fonts.
+![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) `Can run with openstreetmap data but opening with carla doesn't support myanmar fonts.`
 
 #### spawn npc command - filterv for vehicle blueprints flitering
 
