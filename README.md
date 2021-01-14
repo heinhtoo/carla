@@ -1,4 +1,11 @@
-Can run with openstreetmap data but opening with carla doesn't support myanmar fonts.
+
+#### use -m to change map
+available maps:
+- Town01, Town02, Town03, Town04, Town05, Town06, Town07, Town10HD.
+
+osm or xodr maps are also available using --osm-path and -x or --xodr-path respectively.
+
+![#f03c15] Can run with openstreetmap data but opening with carla doesn't support myanmar fonts.
 
 #### spawn npc command - filterv for vehicle blueprints flitering
 
