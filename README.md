@@ -1,6 +1,6 @@
 Can run with openstreetmap data but opening with carla doesn't support myanmar fonts.
 
-####spawn npc command - filterv for vehicle blueprints flitering
+#### spawn npc command - filterv for vehicle blueprints flitering
 
 available vehicles blueprints:
 - vehicle.audi.a2
@@ -32,9 +32,10 @@ available vehicles blueprints:
 - vehicle.yamaha.yzf
 
 -n for number of vehicles (default : 10)
+
 -w for number of walkers (default : 50)
 
-####for dynamic weather, run dynamic_weather.py only to avoid collision.
+#### for dynamic weather, run dynamic_weather.py only to avoid collision.
 for specific weather, run with -w or --weather
 
 available weathers:
